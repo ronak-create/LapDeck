@@ -112,7 +112,7 @@
   const grid = document.getElementById("app-grid");
   // Pick a launcher icon: explicit entry.icon wins, else match the target/label
   // against known apps, else fall back to a per-kind default icon.
-  const ICON_VER = "1"; // bump to bust the phone's cache when icons change
+  const ICON_VER = "2"; // bump to bust the phone's cache when icons change
   function pickIcon(a) {
     if (a.icon) return a.icon.startsWith("http") ? a.icon : "icons/" + a.icon;
     const t = ((a.target || "") + " " + (a.label || "")).toLowerCase();

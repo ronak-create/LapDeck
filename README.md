@@ -27,7 +27,7 @@ Lying in bed and want to pause the movie, nudge the volume, or shut the laptop d
 - **Power** — lock, sleep, restart, shutdown, each with confirm + an abort window (grace period is configurable).
 - **Settings screen** — everything below is tweakable from the phone itself.
 - **PWA** — add to home screen and it feels like a native app.
-- **Remote from anywhere** — optional, via [Tailscale](https://tailscale.com); the agent detects it and shows a remote QR/URL automatically.
+- **Works from anywhere, not just home Wi-Fi** — optional: add [Tailscale](https://tailscale.com) (free) and control your laptop from the other side of the world, no port forwarding, no config. The agent detects it and shows a remote QR/URL automatically.
 
 ## Quick start
 
@@ -75,9 +75,13 @@ Open the **⚙ Settings** screen on the phone (or edit `data/settings.json` on t
 - To re-pair from scratch (rotate the token), delete `data/secret.json` and restart.
 - Transport is plain HTTP/WS on your LAN. That's fine for a home network you trust; for anything else use Tailscale, which encrypts end-to-end (WireGuard) and gives you a valid-HTTPS URL via MagicDNS. **Never port-forward the agent to the open internet.**
 
-## Remote access (Tailscale)
+## Use it from anywhere (remote access)
 
-Install [Tailscale](https://tailscale.com/download) on the laptop and phone with the same account. That's it — the agent detects the tailnet address and the UI's *Remote access* panel offers a one-tap switch, plus an HTTPS URL (via `tailscale cert`/MagicDNS) that makes the PWA installable as a real app from anywhere.
+Out of the box LapDeck works on your local network — phone and laptop on the same Wi-Fi, nothing leaves your house.
+
+Want to control the laptop from work, a friend's place, or another country? Install [Tailscale](https://tailscale.com/download) (free for personal use) on the laptop and phone with the same account. That's the entire setup — no port forwarding, no dynamic DNS, no server to rent. Tailscale puts both devices on a private WireGuard-encrypted network, and LapDeck detects it automatically: the agent prints a second "remote" QR, and the UI's *Remote access* panel offers a one-tap switch plus an HTTPS URL (via MagicDNS/`tailscale cert`) that makes the PWA installable as a real app from anywhere.
+
+Tailscale is entirely optional — LapDeck never needs the internet and has no cloud component. Any WireGuard/VPN setup that puts your phone on your home network works too; Tailscale is just the zero-config way. What you should **not** do is expose the agent's port directly to the internet — see the security model above.
 
 ## Project layout
 
