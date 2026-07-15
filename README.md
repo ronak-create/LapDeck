@@ -1,5 +1,10 @@
 # LapDeck
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%E2%89%A520-brightgreen.svg)](https://nodejs.org)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4.svg)](#faq)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-8b5cf6.svg)](CONTRIBUTING.md)
+
 **Turn your phone into a remote deck for your Windows laptop.**
 
 App launcher · touchpad · keyboard · live screen view · media & volume · brightness · lock/sleep/shutdown — all from the phone in your hand, over your own Wi-Fi. One Node.js process on the laptop, a PWA on the phone, zero cloud, zero accounts.
@@ -115,6 +120,8 @@ The full WebSocket protocol is documented in [docs/PROTOCOL.md](docs/PROTOCOL.md
 ## Contributing
 
 Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Keep it dependency-light: plain modern JavaScript (ESM, Node ≥ 20), no TypeScript, no build step.
+
+Found a security problem? Please report it privately — see [SECURITY.md](SECURITY.md).
 
 ## License
 

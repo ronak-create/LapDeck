@@ -1,0 +1,23 @@
+name: Feature request
+description: An idea to make LapDeck better
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The use case first — what do you reach for your phone to do that LapDeck can't?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How you imagine it working (UI, settings key, protocol command…). Optional.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Fit
+      options:
+        - label: This keeps the client dumb (logic in the agent, phone only sends protocol messages)
+        - label: This doesn't require exposing the agent to the open internet
