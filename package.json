@@ -1,0 +1,43 @@
+{
+  "name": "lapdeck",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Turn your phone into a remote deck for your Windows laptop — app launcher, touchpad, keyboard, live screen view, media & power controls. One Node process, zero cloud.",
+  "license": "MIT",
+  "author": "Ronak Parmar (https://github.com/ronak-create)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronak-create/LapDeck.git"
+  },
+  "homepage": "https://github.com/ronak-create/LapDeck#readme",
+  "bugs": {
+    "url": "https://github.com/ronak-create/LapDeck/issues"
+  },
+  "keywords": [
+    "remote-control",
+    "windows",
+    "android",
+    "touchpad",
+    "remote-desktop",
+    "pwa",
+    "websocket",
+    "tailscale"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "os": [
+    "win32"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "express": "^4.21.2",
+    "qrcode-terminal": "^0.12.0",
+    "sharp": "^0.35.3",
+    "ws": "^8.18.0"
+  }
+}

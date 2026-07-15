@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f17" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>LapDeck</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/app-192.png" />
+  <link rel="apple-touch-icon" href="icons/app-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <span class="title" id="app-title">LapDeck</span>
+    <span class="topbar-right">
+      <button id="gear" class="gear" title="Settings">⚙</button>
+      <span id="dot" class="dot off" title="disconnected"></span>
+    </span>
+  </header>
+
+  <main id="screens">
+    <!-- Launcher screen -->
+    <section id="screen-launcher" class="screen active">
+      <div id="app-grid" class="grid"></div>
+
+      <div class="panel" data-feature="media">
+        <div class="panel-title">Volume</div>
+        <div class="row">
+          <button class="btn" data-act="vol-down">–</button>
+          <button class="btn" data-act="mute">Mute</button>
+          <button class="btn" data-act="vol-up">+</button>
+        </div>
+      </div>
+
+      <div class="panel" data-feature="media">
+        <div class="panel-title">Media</div>
+        <div class="row">
+          <button class="btn" data-act="prev">⏮</button>
+          <button class="btn wide" data-act="playpause">⏯ Play / Pause</button>
+          <button class="btn" data-act="next">⏭</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Brightness <span id="bright-val" class="muted"></span></div>
+        <input id="bright" class="slider" type="range" min="0" max="100" value="50" />
+      </div>
+
+      <div class="panel" data-feature="power">
+        <div class="panel-title">Power</div>
+        <div class="row">
+          <button class="btn" data-act="lock">🔒 Lock</button>
+          <button class="btn warn" data-act="sleep" id="btn-sleep">😴 Sleep</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn warn" data-act="restart" id="btn-restart">🔄 Restart</button>
+          <button class="btn danger" data-act="shutdown" id="btn-shutdown">🔌 Shutdown</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Remote access</div>
+        <div id="remote-body" class="remote-body muted">Checking…</div>
+      </div>
+
+      <div id="sysinfo" class="sysinfo muted"></div>
+    </section>
+
+    <!-- Touchpad screen -->
+    <section id="screen-pad" class="screen">
+      <div id="pad" class="touchpad">
+        <div class="pad-hint">
+          Drag&nbsp;=&nbsp;move&nbsp;·&nbsp;tap&nbsp;=&nbsp;click<br />
+          two&nbsp;fingers&nbsp;drag&nbsp;=&nbsp;scroll&nbsp;·&nbsp;two-finger&nbsp;tap&nbsp;=&nbsp;right-click<br />
+          double-tap&nbsp;&&nbsp;hold&nbsp;=&nbsp;drag
+        </div>
+      </div>
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-title">Pointer speed <span id="sens-val" class="muted"></span></div>
+        <input id="sens" class="slider" type="range" min="1" max="8" step="0.5" value="3.5" />
+      </div>
+      <div class="row">
+        <button class="btn" data-click="left">Left</button>
+        <button class="btn" data-click="middle">Middle</button>
+        <button class="btn" data-click="right">Right</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" data-key="escape">Esc</button>
+        <button class="btn" data-key="tab">Tab</button>
+        <button class="btn" data-key="enter">Enter</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" data-key="left">◀</button>
+        <button class="btn" data-key="up">▲</button>
+        <button class="btn" data-key="down">▼</button>
+        <button class="btn" data-key="right">▶</button>
+      </div>
+    </section>
+
+    <!-- Keyboard screen -->
+    <section id="screen-keys" class="screen">
+      <div class="panel">
+        <div class="panel-title">Type — goes to the laptop as you type</div>
+        <textarea id="kbd" class="kbd" rows="3" autocapitalize="off"
+          autocorrect="off" autocomplete="off" spellcheck="false"
+          placeholder="Tap here and type…"></textarea>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="kbd-clear">Clear</button>
+          <button class="btn" data-key="backspace">⌫</button>
+          <button class="btn" id="kbd-enter">⏎ Enter</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" data-key="tab">Tab</button>
+          <button class="btn" data-combo="shift+tab">Shift+Tab</button>
+          <button class="btn" data-key="escape">Esc</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">My shortcuts — long-press to remove</div>
+        <div id="my-shortcuts" class="shortcut-grid"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Shortcuts</div>
+        <div class="row">
+          <button class="btn" data-combo="ctrl+c">Ctrl+C</button>
+          <button class="btn" data-combo="ctrl+v">Ctrl+V</button>
+          <button class="btn" data-combo="ctrl+z">Ctrl+Z</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" data-combo="ctrl+x">Ctrl+X</button>
+          <button class="btn" data-combo="ctrl+a">Ctrl+A</button>
+          <button class="btn" data-combo="alt+tab">Alt+Tab</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" data-combo="ctrl+w">Ctrl+W</button>
+          <button class="btn" data-combo="ctrl+t">Ctrl+T</button>
+          <button class="btn" data-combo="ctrl+shift+t">Ctrl+Shift+T</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" data-combo="ctrl+f">Ctrl+F</button>
+          <button class="btn" data-key="win">⊞ Win</button>
+          <button class="btn" data-combo="ctrl+shift+n">Ctrl+Shift+N</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" data-combo="ctrl+plus">Zoom In (Ctrl+)</button>
+          <button class="btn" data-combo="ctrl+minus">Zoom Out (Ctrl−)</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" data-key="up">↑</button>
+          <button class="btn" data-key="down">↓</button>
+          <button class="btn" data-key="left">←</button>
+          <button class="btn" data-key="right">→</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn danger" data-combo="alt+f4">Alt+F4</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen view -->
+    <section id="screen-view" class="screen">
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn preset" data-preset="low">Low</button>
+        <button class="btn preset active" data-preset="med">Med</button>
+        <button class="btn preset" data-preset="high">High</button>
+      </div>
+      <div id="screen-wrap" class="screen-wrap">
+        <img id="screen-img" class="screen-img" alt="" />
+        <canvas id="screen-loupe" class="screen-loupe hidden" width="192" height="192"></canvas>
+        <div id="screen-cursor" class="screen-cursor hidden"></div>
+        <div id="screen-status" class="screen-status">Connecting to screen…</div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" data-combo="win+up" title="Maximize">□ Max</button>
+        <button class="btn" data-combo="win+down" title="Minimize">– Min</button>
+        <button class="btn danger" data-combo="alt+f4" title="Close window">✕ Close</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" data-combo="alt+tab">Alt+Tab</button>
+        <button class="btn" data-key="win">⊞ Win</button>
+      </div>
+      <div id="pad-screen" class="touchpad compact" style="margin-top:12px">
+        <div class="pad-hint">
+          Touchpad&nbsp;·&nbsp;drag&nbsp;=&nbsp;move&nbsp;·&nbsp;tap&nbsp;=&nbsp;click<br />
+          two&nbsp;fingers&nbsp;=&nbsp;scroll&nbsp;·&nbsp;two-finger&nbsp;tap&nbsp;=&nbsp;right-click
+        </div>
+      </div>
+      <div class="screen-hint muted">Tap the image = click there · or use the touchpad above · primary display only</div>
+    </section>
+
+    <!-- Settings screen -->
+    <section id="screen-settings" class="screen">
+      <div class="panel">
+        <div class="panel-title">Device name — shown in the title bar</div>
+        <input id="set-name" class="text-input" maxlength="40" placeholder="e.g. Ronak's laptop" />
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Accent color</div>
+        <div id="swatches" class="swatches">
+          <button class="swatch" data-accent="#4c8dff" style="background:#4c8dff"></button>
+          <button class="swatch" data-accent="#8b5cf6" style="background:#8b5cf6"></button>
+          <button class="swatch" data-accent="#22c55e" style="background:#22c55e"></button>
+          <button class="swatch" data-accent="#f59e0b" style="background:#f59e0b"></button>
+          <button class="swatch" data-accent="#f43f5e" style="background:#f43f5e"></button>
+          <button class="swatch" data-accent="#06b6d4" style="background:#06b6d4"></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Features — disabled features are refused by the laptop, not just hidden</div>
+        <label class="setting-row"><span>Live screen view</span><input type="checkbox" class="toggle" id="feat-screen" /></label>
+        <label class="setting-row"><span>Touchpad &amp; keyboard</span><input type="checkbox" class="toggle" id="feat-input" /></label>
+        <label class="setting-row"><span>Media &amp; volume</span><input type="checkbox" class="toggle" id="feat-media" /></label>
+        <label class="setting-row"><span>Power controls</span><input type="checkbox" class="toggle" id="feat-power" /></label>
+        <label class="setting-row"><span>File browsing (protocol)</span><input type="checkbox" class="toggle" id="feat-files" /></label>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Power permissions</div>
+        <label class="setting-row"><span>Allow sleep</span><input type="checkbox" class="toggle" id="pow-sleep" /></label>
+        <label class="setting-row"><span>Allow shutdown</span><input type="checkbox" class="toggle" id="pow-shutdown" /></label>
+        <label class="setting-row"><span>Allow restart</span><input type="checkbox" class="toggle" id="pow-restart" /></label>
+        <div class="panel-title" style="margin-top:12px">Shutdown grace period <span id="grace-val" class="muted"></span></div>
+        <input id="grace" class="slider" type="range" min="0" max="30" step="1" value="5" />
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">This phone</div>
+        <label class="setting-row"><span>Haptic feedback</span><input type="checkbox" class="toggle" id="pref-haptics" /></label>
+        <label class="setting-row"><span>Natural scrolling</span><input type="checkbox" class="toggle" id="pref-natscroll" /></label>
+      </div>
+
+      <div class="panel">
+        <div class="row">
+          <button class="btn danger" id="set-reset">Reset all settings</button>
+        </div>
+      </div>
+
+      <div class="sysinfo muted" id="about"></div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-screen="launcher">Apps</button>
+    <button class="tab" data-screen="pad">Touchpad</button>
+    <button class="tab" data-screen="keys">Keyboard</button>
+    <button class="tab" data-screen="view">Screen</button>
+  </nav>
+
+  <!-- Add-app sheet -->
+  <div id="sheet" class="sheet hidden">
+    <div class="sheet-card">
+      <div class="sheet-title" id="sheet-title">Add app</div>
+      <div id="sheet-body"></div>
+      <div class="row">
+        <button class="btn" id="sheet-cancel">Cancel</button>
+        <button class="btn primary" id="sheet-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
