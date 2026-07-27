@@ -5,24 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>LapDeck — Turn your phone into a remote deck for your Windows laptop</title>
 <meta name="description" content="App launcher, touchpad, keyboard, live screen view, media, brightness and power — all from your phone over your own Wi-Fi. One Node process on the laptop, a PWA on the phone. Zero cloud, zero accounts." />
+<meta name="keywords" content="phone remote for laptop, Windows remote control, phone touchpad, phone keyboard, remote deck, PWA remote, Tailscale remote laptop, LAN remote control, open source, LapDeck" />
+<meta name="author" content="Ronak Parmar" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
 <meta name="theme-color" content="#0b0f17" />
+<meta name="color-scheme" content="dark" />
+<link rel="canonical" href="https://ronak-create.github.io/LapDeck/" />
 <link rel="icon" type="image/svg+xml" href="./logo.svg" />
 <link rel="apple-touch-icon" href="./logo-512.png" />
 
 <!-- Open Graph / social -->
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="LapDeck" />
+<meta property="og:locale" content="en_US" />
 <meta property="og:title" content="LapDeck — your phone is the remote for your Windows laptop" />
 <meta property="og:description" content="Launcher, touchpad, keyboard, live screen, media & power — from the phone in your hand, over your own Wi-Fi. Zero cloud, zero accounts." />
-<meta property="og:image" content="./social-preview.png" />
+<meta property="og:image" content="https://ronak-create.github.io/LapDeck/social-preview.png" />
+<meta property="og:image:width" content="1280" />
+<meta property="og:image:height" content="640" />
+<meta property="og:image:alt" content="LapDeck — turn your phone into a remote deck for your Windows laptop" />
 <meta property="og:url" content="https://ronak-create.github.io/LapDeck/" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="LapDeck — your phone is the remote for your Windows laptop" />
 <meta name="twitter:description" content="Launcher, touchpad, keyboard, live screen, media & power — over your own Wi-Fi. Zero cloud." />
-<meta name="twitter:image" content="./social-preview.png" />
+<meta name="twitter:image" content="https://ronak-create.github.io/LapDeck/social-preview.png" />
+<meta name="twitter:image:alt" content="LapDeck — turn your phone into a remote deck for your Windows laptop" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
 :root{
@@ -101,7 +112,25 @@ header.nav.scrolled{border-bottom-color:var(--line);background:rgba(11,15,23,.82
 .nav-links a{color:var(--muted);font-size:15px;font-weight:450;transition:color .18s}
 .nav-links a:hover{color:var(--text)}
 .nav-cta{display:flex;align-items:center;gap:12px}
-@media(max-width:860px){.nav-links{display:none}}
+
+/* mobile nav menu */
+.nav-toggle{display:none;width:42px;height:40px;border-radius:11px;border:1px solid var(--line-2);
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));cursor:pointer;padding:0;place-items:center;color:var(--text)}
+.nav-toggle svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.nav-toggle .close-ic{display:none}
+@media(max-width:860px){
+  .nav-links{position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;
+    padding:8px var(--pad) 18px;background:rgba(11,15,23,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+    opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s}
+  .nav-links a{padding:13px 4px;font-size:16px;border-top:1px solid var(--line)}
+  .nav-links a:first-child{border-top:none}
+  header.nav.menu-open .nav-links{opacity:1;visibility:visible;transform:none}
+  .nav-toggle{display:grid}
+  header.nav.menu-open .nav-toggle .open-ic{display:none}
+  header.nav.menu-open .nav-toggle .close-ic{display:block}
+}
+@media(max-width:420px){.star-btn .star-lbl{display:none}.star-btn{padding:0 12px}}
 
 /* star button */
 .star-btn{display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 16px;border-radius:11px;
@@ -137,6 +166,12 @@ header.nav.scrolled{border-bottom-color:var(--line);background:rgba(11,15,23,.82
 .hero-meta{display:flex;gap:26px;margin-top:34px;flex-wrap:wrap;color:var(--muted-2);font-size:14px}
 .hero-meta span{display:inline-flex;align-items:center;gap:8px}
 .hero-meta svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2}
+@media(max-width:560px){
+  .hero{min-height:auto;padding:72px 0 48px}
+  .hero-cta{gap:10px}
+  .hero-cta .btn{flex:1 1 100%}
+  .hero-meta{gap:14px 20px;margin-top:28px}
+}
 
 /* connection flow diagram */
 .flow{margin-top:56px;display:flex;align-items:center;gap:0;flex-wrap:wrap;
@@ -162,6 +197,8 @@ header.nav.scrolled{border-bottom-color:var(--line);background:rgba(11,15,23,.82
 .sec-head h2{font-size:clamp(30px,4.4vw,48px);margin-top:14px;letter-spacing:-.03em}
 .sec-head p{margin-top:16px;font-size:18px;color:var(--muted)}
 .pad{padding:110px 0}
+@media(max-width:720px){.pad{padding:68px 0}.sec-head{margin-bottom:38px}.sec-head p{font-size:16.5px}}
+@media(max-width:480px){.pad{padding:54px 0}}
 
 /* ---------- screenshots showcase ---------- */
 .shots{display:flex;gap:26px;justify-content:center;align-items:flex-end;flex-wrap:wrap}
@@ -301,6 +338,39 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 </style>
+
+<!-- Structured data for rich search results -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "LapDeck",
+      "operatingSystem": "Windows 10, Windows 11",
+      "applicationCategory": "UtilitiesApplication",
+      "description": "Turn your phone into a remote deck for your Windows laptop — app launcher, touchpad, keyboard, live screen view, media, brightness and power, all over your own Wi-Fi. Zero cloud, zero accounts.",
+      "url": "https://ronak-create.github.io/LapDeck/",
+      "downloadUrl": "https://github.com/ronak-create/LapDeck",
+      "image": "https://ronak-create.github.io/LapDeck/social-preview.png",
+      "license": "https://github.com/ronak-create/LapDeck/blob/main/LICENSE",
+      "author": { "@type": "Person", "name": "Ronak Parmar" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Why Windows-only?", "acceptedAnswer": { "@type": "Answer", "text": "All the OS glue — volume, brightness, power, screen capture — lives behind src/win/. The protocol and the UI are OS-agnostic, so ports to macOS and Linux are welcome." } },
+        { "@type": "Question", "name": "My phone can't connect.", "acceptedAnswer": { "@type": "Answer", "text": "The number-one cause is the firewall. Allow Node.js through Windows Firewall on private networks — the prompt appears on first run. Also confirm the phone is on the same Wi-Fi as the laptop." } },
+        { "@type": "Question", "name": "Sleep hibernates instead of sleeping.", "acceptedAnswer": { "@type": "Answer", "text": "A Windows quirk: if hibernation is enabled, SetSuspendState hibernates. Run powercfg /h off if you prefer S3 sleep." } },
+        { "@type": "Question", "name": "Does it work without internet?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — everything is LAN-local. The internet is only involved if you choose to add Tailscale for remote access." } },
+        { "@type": "Question", "name": "Can I control it from outside my home Wi-Fi?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Install free Tailscale on both devices — no port forwarding, no config. The agent detects it and shows a remote QR / URL automatically." } },
+        { "@type": "Question", "name": "Multiple monitors?", "acceptedAnswer": { "@type": "Answer", "text": "Screen view currently shows the primary display only. Multi-monitor selection is on the wishlist — contributions welcome." } }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <div class="bg-fx"></div>
@@ -311,7 +381,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
 <header class="nav" id="nav">
   <div class="nav-in">
     <a class="brand" href="#top"><img src="./logo.svg" alt="" /> LapDeck</a>
-    <nav class="nav-links">
+    <nav class="nav-links" id="navLinks">
       <a href="#features">Features</a>
       <a href="#setup">Setup</a>
       <a href="#remote">Remote</a>
@@ -321,9 +391,13 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
     </nav>
     <div class="nav-cta">
       <a class="star-btn" href="https://github.com/ronak-create/LapDeck" target="_blank" rel="noopener" aria-label="Star LapDeck on GitHub">
-        <svg viewBox="0 0 24 24"><path d="M12 2.2l3.02 6.12 6.76.98-4.89 4.77 1.15 6.73L12 17.98l-6.04 3.02 1.15-6.73L2.22 9.3l6.76-.98L12 2.2z"/></svg>
-        Star <span class="star-count" id="stars">·</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2l3.02 6.12 6.76.98-4.89 4.77 1.15 6.73L12 17.98l-6.04 3.02 1.15-6.73L2.22 9.3l6.76-.98L12 2.2z"/></svg>
+        <span class="star-lbl">Star</span> <span class="star-count" id="stars">·</span>
       </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+        <svg class="open-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg class="close-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </div>
   </div>
 </header>
@@ -378,10 +452,10 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
       <p style="margin-left:auto;margin-right:auto">Native-feeling, thumb-friendly, and built as a real PWA — add it to your home screen and it opens like an app.</p>
     </div>
     <div class="shots reveal">
-      <figure class="phone"><img src="./screenshots/launcher.png" alt="LapDeck app launcher screen" loading="lazy" /><figcaption class="cap">Launcher</figcaption></figure>
-      <figure class="phone"><img src="./screenshots/touchpad.png" alt="LapDeck touchpad screen" loading="lazy" /><figcaption class="cap">Touchpad</figcaption></figure>
-      <figure class="phone"><img src="./screenshots/keyboard.png" alt="LapDeck keyboard with custom shortcuts" loading="lazy" /><figcaption class="cap">Keyboard &amp; shortcuts</figcaption></figure>
-      <figure class="phone"><img src="./screenshots/settings.png" alt="LapDeck settings screen" loading="lazy" /><figcaption class="cap">Settings</figcaption></figure>
+      <figure class="phone"><img src="./screenshots/launcher.png" alt="LapDeck app launcher screen on a phone" width="780" height="1688" loading="lazy" decoding="async" /><figcaption class="cap">Launcher</figcaption></figure>
+      <figure class="phone"><img src="./screenshots/touchpad.png" alt="LapDeck touchpad screen on a phone" width="780" height="1688" loading="lazy" decoding="async" /><figcaption class="cap">Touchpad</figcaption></figure>
+      <figure class="phone"><img src="./screenshots/keyboard.png" alt="LapDeck keyboard with custom shortcuts on a phone" width="780" height="1688" loading="lazy" decoding="async" /><figcaption class="cap">Keyboard &amp; shortcuts</figcaption></figure>
+      <figure class="phone"><img src="./screenshots/settings.png" alt="LapDeck settings screen on a phone" width="780" height="1688" loading="lazy" decoding="async" /><figcaption class="cap">Settings</figcaption></figure>
     </div>
   </div>
 </section>
@@ -779,6 +853,14 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
 // nav shadow on scroll
 const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>12),{passive:true});
+
+// mobile nav menu
+const navToggle=document.getElementById('navToggle');
+const navLinks=document.getElementById('navLinks');
+const setMenu=(open)=>{nav.classList.toggle('menu-open',open);navToggle.setAttribute('aria-expanded',open);};
+navToggle.addEventListener('click',()=>setMenu(!nav.classList.contains('menu-open')));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false);});
 
 // live GitHub star count
 (async()=>{

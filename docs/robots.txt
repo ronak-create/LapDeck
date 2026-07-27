@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ronak-create.github.io/LapDeck/sitemap.xml
