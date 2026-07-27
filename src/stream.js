@@ -1,10 +1,11 @@
 // Shared MJPEG capture engine: one capture loop feeding all connected viewers.
-// Capture via nut.js screen.grab() (native, no external exe), encode with sharp.
-// The mouse cursor is a hardware overlay that screen.grab() doesn't capture; the
-// phone draws its own cursor overlay (client-side, realtime) instead of baking
-// one into these frames — that keeps the pointer smooth independent of frame rate.
-import { screen } from "@nut-tree-fork/nut-js";
-import sharp from "sharp";
+// The actual capture + JPEG encoding lives in the OS screen backend (nut.js on
+// Windows/X11, grim/fallback on Wayland); this module owns the single shared
+// loop, viewer fan-out, and backpressure handling only.
+// The mouse cursor is a hardware overlay the capture doesn't include; the phone
+// draws its own client-side cursor overlay instead of baking one into these
+// frames — that keeps the pointer smooth independent of frame rate.
+import { grabJpeg, screenSize as backendScreenSize } from "./os/screen.js";
 
 const viewers = new Set(); // http response objects currently streaming
 let timer = null;
@@ -19,10 +20,10 @@ export function setConfig({ fps, width, quality } = {}) {
   return { ...config };
 }
 
-// nut.js works in logical (DPI-scaled) coordinates — the space input.moveTo uses,
-// so tap-to-click maps against these, not the native capture resolution.
+// Logical (DPI-scaled) screen size — the space input.moveTo uses, so tap-to-
+// click maps against these, not the native capture resolution.
 export async function screenSize() {
-  return { width: await screen.width(), height: await screen.height() };
+  return backendScreenSize();
 }
 
 async function tick() {
@@ -30,15 +31,7 @@ async function tick() {
   if (viewers.size === 0 || grabbing) return;
   grabbing = true;
   try {
-    const img = await screen.grab();
-    const jpg = await sharp(img.data, {
-      raw: { width: img.width, height: img.height, channels: img.channels },
-    })
-      .resize({ width: config.width })
-      .removeAlpha()                               // BGRA -> BGR
-      .recomb([[0, 0, 1], [0, 1, 0], [1, 0, 0]])   // BGR -> RGB (Windows capture swaps R/B)
-      .jpeg({ quality: config.quality })
-      .toBuffer();
+    const jpg = await grabJpeg({ width: config.width, quality: config.quality });
 
     const head = Buffer.from(
       `--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpg.length}\r\n\r\n`

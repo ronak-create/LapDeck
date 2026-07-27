@@ -12,7 +12,8 @@ import { DATA_DIR, featureEnabled } from "./settings.js";
 import { setToken, tokenValid, httpAuth } from "./auth.js";
 import { dispatch } from "./router.js";
 import { addViewer, removeViewer } from "./stream.js";
-import { getTailscaleIp } from "./win/network.js";
+import { getTailscaleIp } from "./os/network.js";
+import { IS_WIN, hostname } from "./platform.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
@@ -81,7 +82,7 @@ wss.on("connection", (ws, req) => {
         authed = true;
         clearTimeout(authTimer);
         log("auth ok", ip);
-        ws.send(JSON.stringify({ id: msg.id, ok: true, data: { host: process.env.COMPUTERNAME || "laptop", version: VERSION } }));
+        ws.send(JSON.stringify({ id: msg.id, ok: true, data: { host: hostname(), version: VERSION } }));
       } else {
         log("auth fail", ip);
         ws.send(JSON.stringify({ id: msg?.id, ok: false, error: "unauthorized" }));
@@ -137,7 +138,11 @@ server.listen(PORT, BIND, () => {
   qrcode.generate(url, { small: true });
   console.log("\nOr open:  " + url);
   console.log("Local test: http://localhost:" + PORT + "/#t=" + token);
-  console.log("\nIf your phone can't connect, allow Node.js through Windows Firewall (private networks).\n");
+  if (IS_WIN) {
+    console.log("\nIf your phone can't connect, allow Node.js through Windows Firewall (private networks).\n");
+  } else {
+    console.log(`\nIf your phone can't connect, allow port ${PORT}/tcp through your firewall (e.g. sudo ufw allow ${PORT}/tcp).\n`);
+  }
 
   // Show the remote (from-anywhere) URL too, if Tailscale is up.
   getTailscaleIp().then((ip) => {

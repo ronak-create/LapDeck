@@ -1,5 +1,5 @@
 // Volume, mute, and transport controls.
-import * as vol from "../win/volume.js";
+import * as vol from "../os/volume.js";
 
 export const media = {
   "media.playpause": async () => {
