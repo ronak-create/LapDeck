@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>LapDeck — Turn your phone into a remote deck for your Windows laptop</title>
-<meta name="description" content="App launcher, touchpad, keyboard, live screen view, media, brightness and power — all from your phone over your own Wi-Fi. One Node process on the laptop, a PWA on the phone. Zero cloud, zero accounts." />
-<meta name="keywords" content="phone remote for laptop, Windows remote control, phone touchpad, phone keyboard, remote deck, PWA remote, Tailscale remote laptop, LAN remote control, open source, LapDeck" />
+<title>LapDeck — Turn your phone into a remote deck for your Windows or Linux laptop</title>
+<meta name="description" content="App launcher, touchpad, keyboard, live screen view, media, brightness and power — all from your phone over your own Wi-Fi. One Node process on your Windows or Linux laptop, a PWA on the phone. Zero cloud, zero accounts." />
+<meta name="keywords" content="phone remote for laptop, Windows remote control, Linux remote control, phone touchpad, phone keyboard, remote deck, PWA remote, Tailscale remote laptop, LAN remote control, open source, LapDeck" />
 <meta name="author" content="Ronak Parmar" />
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <meta name="theme-color" content="#0b0f17" />
@@ -18,18 +18,18 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="LapDeck" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:title" content="LapDeck — your phone is the remote for your Windows laptop" />
+<meta property="og:title" content="LapDeck — your phone is the remote for your Windows or Linux laptop" />
 <meta property="og:description" content="Launcher, touchpad, keyboard, live screen, media & power — from the phone in your hand, over your own Wi-Fi. Zero cloud, zero accounts." />
 <meta property="og:image" content="https://ronak-create.github.io/LapDeck/social-preview.png" />
 <meta property="og:image:width" content="1280" />
 <meta property="og:image:height" content="640" />
-<meta property="og:image:alt" content="LapDeck — turn your phone into a remote deck for your Windows laptop" />
+<meta property="og:image:alt" content="LapDeck — turn your phone into a remote deck for your Windows or Linux laptop" />
 <meta property="og:url" content="https://ronak-create.github.io/LapDeck/" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="LapDeck — your phone is the remote for your Windows laptop" />
+<meta name="twitter:title" content="LapDeck — your phone is the remote for your Windows or Linux laptop" />
 <meta name="twitter:description" content="Launcher, touchpad, keyboard, live screen, media & power — over your own Wi-Fi. Zero cloud." />
 <meta name="twitter:image" content="https://ronak-create.github.io/LapDeck/social-preview.png" />
-<meta name="twitter:image:alt" content="LapDeck — turn your phone into a remote deck for your Windows laptop" />
+<meta name="twitter:image:alt" content="LapDeck — turn your phone into a remote deck for your Windows or Linux laptop" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -349,9 +349,9 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
     {
       "@type": "SoftwareApplication",
       "name": "LapDeck",
-      "operatingSystem": "Windows 10, Windows 11",
+      "operatingSystem": "Windows 10, Windows 11, Linux",
       "applicationCategory": "UtilitiesApplication",
-      "description": "Turn your phone into a remote deck for your Windows laptop — app launcher, touchpad, keyboard, live screen view, media, brightness and power, all over your own Wi-Fi. Zero cloud, zero accounts.",
+      "description": "Turn your phone into a remote deck for your Windows or Linux laptop — app launcher, touchpad, keyboard, live screen view, media, brightness and power, all over your own Wi-Fi. Zero cloud, zero accounts.",
       "url": "https://ronak-create.github.io/LapDeck/",
       "downloadUrl": "https://github.com/ronak-create/LapDeck",
       "image": "https://ronak-create.github.io/LapDeck/social-preview.png",
@@ -362,9 +362,9 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
     {
       "@type": "FAQPage",
       "mainEntity": [
-        { "@type": "Question", "name": "Why Windows-only?", "acceptedAnswer": { "@type": "Answer", "text": "All the OS glue — volume, brightness, power, screen capture — lives behind src/win/. The protocol and the UI are OS-agnostic, so ports to macOS and Linux are welcome." } },
-        { "@type": "Question", "name": "My phone can't connect.", "acceptedAnswer": { "@type": "Answer", "text": "The number-one cause is the firewall. Allow Node.js through Windows Firewall on private networks — the prompt appears on first run. Also confirm the phone is on the same Wi-Fi as the laptop." } },
-        { "@type": "Question", "name": "Sleep hibernates instead of sleeping.", "acceptedAnswer": { "@type": "Answer", "text": "A Windows quirk: if hibernation is enabled, SetSuspendState hibernates. Run powercfg /h off if you prefer S3 sleep." } },
+        { "@type": "Question", "name": "Does it run on Windows and Linux?", "acceptedAnswer": { "@type": "Answer", "text": "Both. The same app auto-detects the OS at launch and picks the right backend — src/win/ on Windows, src/linux/ on Linux — behind a shared facade. On Linux both X11 and Wayland are supported (Wayland uses ydotool for input and grim for screen capture)." } },
+        { "@type": "Question", "name": "My phone can't connect.", "acceptedAnswer": { "@type": "Answer", "text": "The number-one cause is the firewall. On Windows, allow Node.js through Windows Firewall on private networks — the prompt appears on first run. On Linux, allow the port (for example sudo ufw allow 8765/tcp). Also confirm the phone is on the same Wi-Fi as the laptop." } },
+        { "@type": "Question", "name": "Sleep hibernates instead of sleeping.", "acceptedAnswer": { "@type": "Answer", "text": "A Windows quirk: if hibernation is enabled, SetSuspendState hibernates. Run powercfg /h off if you prefer S3 sleep. On Linux, sleep uses systemctl suspend." } },
         { "@type": "Question", "name": "Does it work without internet?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — everything is LAN-local. The internet is only involved if you choose to add Tailscale for remote access." } },
         { "@type": "Question", "name": "Can I control it from outside my home Wi-Fi?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Install free Tailscale on both devices — no port forwarding, no config. The agent detects it and shows a remote QR / URL automatically." } },
         { "@type": "Question", "name": "Multiple monitors?", "acceptedAnswer": { "@type": "Answer", "text": "Screen view currently shows the primary display only. Multi-monitor selection is on the wishlist — contributions welcome." } }
@@ -411,7 +411,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
       <svg class="spark" viewBox="0 0 24 24" fill="none" stroke="#7db0ff" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/></svg>
       <b>Zero cloud</b> · zero accounts · your own Wi-Fi
     </span>
-    <h1 class="reveal">Your phone is the <span class="grad">remote</span> for your Windows laptop.</h1>
+    <h1 class="reveal">Your phone is the <span class="grad">remote</span> for your Windows &amp; Linux laptop.</h1>
     <p class="sub reveal">Launcher, touchpad, keyboard, a live screen you can tap, media &amp; volume, brightness, and lock / sleep / shutdown — <b>all from the phone in your hand.</b> One Node.js process on the laptop, a PWA on the phone. Nothing leaves your network.</p>
     <div class="hero-cta reveal">
       <a class="btn btn-primary" href="#setup">
@@ -424,7 +424,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
       </a>
     </div>
     <div class="hero-meta reveal">
-      <span><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Windows 10 / 11</span>
+      <span><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Windows &amp; Linux</span>
       <span><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Node.js ≥ 20</span>
       <span><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Installable PWA</span>
       <span><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Works over Tailscale</span>
@@ -439,7 +439,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
       <div class="flow-link"><div class="flow-wire"></div>Wi-Fi / Tailscale</div>
       <div class="flow-node">
         <div class="flow-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></div>
-        <div><h4>LapDeck agent</h4><p>One Node.js process on Windows</p></div>
+        <div><h4>LapDeck agent</h4><p>One Node.js process on Windows or Linux</p></div>
       </div>
     </div>
   </div>
@@ -521,7 +521,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
     <div class="sec-head reveal">
       <div class="sec-tag">Quick start</div>
       <h2>Running in under a minute.</h2>
-      <p>Requirements: Windows 10/11, Node.js ≥ 20, and your phone on the same Wi-Fi.</p>
+      <p>Requirements: Windows 10/11 or Linux, Node.js ≥ 20, and your phone on the same Wi-Fi.</p>
     </div>
     <div class="steps">
       <div class="step reveal">
@@ -530,7 +530,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
           <h3>Clone &amp; install</h3>
           <p>Grab the repo and pull the dependencies. One command starts the agent.</p>
           <div class="code">
-            <div class="code-top"><span class="lbl">PowerShell</span><button class="copy" data-copy="git clone https://github.com/ronak-create/LapDeck.git&#10;cd LapDeck&#10;npm install&#10;npm start"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button></div>
+            <div class="code-top"><span class="lbl">Terminal</span><button class="copy" data-copy="git clone https://github.com/ronak-create/LapDeck.git&#10;cd LapDeck&#10;npm install&#10;npm start"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button></div>
             <pre><code><span class="tok-k">git</span> clone https://github.com/ronak-create/LapDeck.git
 <span class="tok-k">cd</span> LapDeck
 <span class="tok-k">npm</span> install
@@ -545,7 +545,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
           <p>The terminal prints a QR. Scan it with your phone — the UI opens <b>already paired</b>. The pairing token rides in the link and is stored on the phone, so you only ever scan once.</p>
           <div class="note">
             <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
-            <span>Phone can't connect? Allow <b>Node.js</b> through Windows Firewall on <b>private networks</b> — the prompt appears on first run. That's the #1 cause.</span>
+            <span>Phone can't connect? On Windows, allow <b>Node.js</b> through Windows Firewall on <b>private networks</b> (the prompt appears on first run). On Linux, allow the port: <code>sudo ufw allow 8765/tcp</code>. That's the #1 cause.</span>
           </div>
         </div>
       </div>
@@ -587,7 +587,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
         </a>
       </div>
       <div class="remote-steps">
-        <div class="rstep"><span class="rnum">1</span><div><h4>Install on the laptop</h4><p>Download Tailscale for Windows and sign in with Google, GitHub or Microsoft — one account, no server to run.</p></div></div>
+        <div class="rstep"><span class="rnum">1</span><div><h4>Install on the laptop</h4><p>Install Tailscale for Windows or Linux and sign in with Google, GitHub or Microsoft — one account, no server to run.</p></div></div>
         <div class="rstep"><span class="rnum">2</span><div><h4>Install on the phone</h4><p>Add the Tailscale app and sign in with the <b>same account</b>. Both devices join your private tailnet and get stable <code>100.x.x.x</code> addresses.</p></div></div>
         <div class="rstep"><span class="rnum">3</span><div><h4>Start LapDeck</h4><p>Run <code>npm start</code>. The agent spots the Tailscale interface and shows a remote QR / URL alongside the local one — scan it while you're away.</p></div></div>
         <div class="rstep"><span class="rnum">4</span><div><h4>(Optional) Lock it to Tailscale only</h4><p>Bind the agent to just your Tailscale IP so it never listens on public Wi-Fi. Set it in <code>settings.json</code> or via env var:</p>
@@ -787,9 +787,9 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
       <h2>Questions, answered.</h2>
     </div>
     <div class="faq">
-      <details class="q reveal"><summary>Why Windows-only?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">All the OS glue — volume, brightness, power, screen capture — lives behind <code>src/win/</code>. The protocol and the UI are OS-agnostic, so ports to macOS and Linux are welcome.</div></details>
-      <details class="q reveal"><summary>My phone can't connect.<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">The number-one cause is the firewall. Allow <b>Node.js</b> through Windows Firewall on <b>private networks</b> — the prompt appears on first run. Also confirm the phone is on the same Wi-Fi as the laptop.</div></details>
-      <details class="q reveal"><summary>Sleep hibernates instead of sleeping.<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">A Windows quirk: if hibernation is enabled, <code>SetSuspendState</code> hibernates. Run <code>powercfg /h off</code> if you prefer S3 sleep.</div></details>
+      <details class="q reveal"><summary>Does it run on Windows and Linux?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Both. The same app auto-detects the OS at launch and picks the right backend — <code>src/win/</code> on Windows, <code>src/linux/</code> on Linux — behind a shared facade. On Linux both <b>X11</b> and <b>Wayland</b> work: Wayland uses <code>ydotool</code> for input and <code>grim</code> for screen capture (needs the matching tools installed). macOS is a welcome contribution.</div></details>
+      <details class="q reveal"><summary>My phone can't connect.<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">The number-one cause is the firewall. On Windows, allow <b>Node.js</b> through Windows Firewall on <b>private networks</b> (the prompt appears on first run). On Linux, allow the port: <code>sudo ufw allow 8765/tcp</code>. Also confirm the phone is on the same Wi-Fi as the laptop.</div></details>
+      <details class="q reveal"><summary>Sleep hibernates instead of sleeping.<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">A Windows quirk: if hibernation is enabled, <code>SetSuspendState</code> hibernates. Run <code>powercfg /h off</code> if you prefer S3 sleep. On Linux, sleep uses <code>systemctl suspend</code>.</div></details>
       <details class="q reveal"><summary>Does it work without internet?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Yes — everything is LAN-local. The internet is only involved if you choose to add Tailscale for remote access.</div></details>
       <details class="q reveal"><summary>Can I control it from outside my home Wi-Fi?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Yes. Install free <b>Tailscale</b> on both devices — no port forwarding, no config. The agent detects it and shows a remote QR / URL automatically.</div></details>
       <details class="q reveal"><summary>Multiple monitors?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Screen view currently shows the primary display only. Multi-monitor selection is on the wishlist — contributions welcome.</div></details>
@@ -820,7 +820,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
     <div class="foot">
       <div>
         <a class="brand" href="#top"><img src="./logo.svg" alt="" /> LapDeck</a>
-        <p>Turn your phone into a remote deck for your Windows laptop — launcher, touchpad, keyboard, live screen, media &amp; power. Zero cloud, zero accounts.</p>
+        <p>Turn your phone into a remote deck for your Windows or Linux laptop — launcher, touchpad, keyboard, live screen, media &amp; power. Zero cloud, zero accounts.</p>
       </div>
       <div class="foot-links">
         <div class="foot-col">
