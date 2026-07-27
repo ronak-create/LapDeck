@@ -206,7 +206,7 @@ header.nav.scrolled{border-bottom-color:var(--line);background:rgba(11,15,23,.82
   background:linear-gradient(160deg,#2c3a54,#141b28);border:1px solid var(--line-2);
   box-shadow:0 40px 80px -30px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.03) inset;
   transition:transform .5s var(--ease),box-shadow .5s}
-.phone img{display:block;width:210px;border-radius:23px;background:var(--bg)}
+.phone img{display:block;width:210px;height:auto;border-radius:23px;background:var(--bg)}
 .phone .cap{position:absolute;left:0;right:0;bottom:-34px;text-align:center;font-size:13.5px;color:var(--muted-2)}
 .phone:nth-child(odd){transform:translateY(-18px) rotate(-1.4deg)}
 .phone:nth-child(even){transform:translateY(10px) rotate(1.4deg)}
@@ -254,6 +254,8 @@ header.nav.scrolled{border-bottom-color:var(--line);background:rgba(11,15,23,.82
 .copy svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
 .code pre{margin:0;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.7}
 .code pre code{color:#c9d6ea}
+/* let code blocks scroll instead of forcing horizontal page overflow in grid/flex tracks */
+.step,.step-body,.doc-card,.rstep,.rstep>div,.remote-copy,.remote-steps,.cell,.code{min-width:0}
 .tok-c{color:#5c6b82;font-style:italic}
 .tok-k{color:#7db0ff}
 .tok-s{color:#8fd694}
@@ -282,7 +284,7 @@ header.nav.scrolled{border-bottom-color:var(--line);background:rgba(11,15,23,.82
 .docs-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:22px}
 @media(max-width:900px){.docs-grid{grid-template-columns:1fr}}
 .doc-card{border:1px solid var(--line);border-radius:var(--r);padding:30px;background:linear-gradient(180deg,rgba(20,27,40,.6),rgba(13,18,28,.45))}
-.doc-card h3{font-size:21px;margin-bottom:6px;display:flex;align-items:center;gap:11px}
+.doc-card h3{font-size:21px;margin-bottom:6px;display:flex;align-items:center;gap:11px;flex-wrap:wrap}
 .doc-card h3 .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(76,141,255,.12);border:1px solid rgba(76,141,255,.2)}
 .doc-card h3 .ic svg{width:18px;height:18px;stroke:var(--accent-2);fill:none;stroke-width:1.8}
 .doc-card>p{color:var(--muted);font-size:15px;margin-bottom:8px}
@@ -543,7 +545,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
           <p>The terminal prints a QR. Scan it with your phone — the UI opens <b>already paired</b>. The pairing token rides in the link and is stored on the phone, so you only ever scan once.</p>
           <div class="note">
             <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
-            Phone can't connect? Allow <b>Node.js</b> through Windows Firewall on <b>private networks</b> — the prompt appears on first run. That's the #1 cause.
+            <span>Phone can't connect? Allow <b>Node.js</b> through Windows Firewall on <b>private networks</b> — the prompt appears on first run. That's the #1 cause.</span>
           </div>
         </div>
       </div>
