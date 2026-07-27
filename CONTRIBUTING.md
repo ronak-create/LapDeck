@@ -4,9 +4,12 @@ Thanks for helping! A few ground rules keep the project easy to hack on:
 
 - **Plain modern JavaScript.** ESM, Node ≥ 20, no TypeScript, no build step,
   no bundler. The phone UI is vanilla HTML/CSS/JS served statically.
-- **Windows glue stays in `src/win/`.** PowerShell snippets and OS-specific
-  commands never get inlined into handlers — that's also the seam a
-  macOS/Linux port would implement.
+- **OS glue stays behind the `src/os/` facade.** Handlers import a
+  platform-neutral capability (`../os/volume.js`, `../os/screen.js`, …); the
+  facade picks the backend — `src/win/` (Windows), `src/linux/` (Linux), or the
+  shared nut.js backends in `src/backends/` (Windows & Linux X11). Never inline
+  a PowerShell snippet or a `pactl`/`ydotool` call into a handler. A new platform
+  (e.g. macOS) is a new backend dir + a branch in each `src/os/*.js`.
 - **Security first.** Every remote-capable endpoint requires the pairing
   token. No unauthenticated command may ever execute. Destructive actions
   keep their `confirm` + settings-permission double gate.
@@ -31,7 +34,8 @@ test suite for the OS-glue parts; honest manual testing is the bar.
 
 ## Good first contributions
 
-- macOS / Linux ports of `src/win/`
+- macOS backend (`src/mac/`) behind the `src/os/` facade
+- Wayland scroll via a `ydotool` wheel path (or a PipeWire-portal screen backend)
 - Multi-monitor screen view
 - Clipboard sync (send/fetch clipboard text)
 - Wake-on-LAN companion

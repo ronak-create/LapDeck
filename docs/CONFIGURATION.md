@@ -2,7 +2,7 @@
 
 Everything user-tunable lives in **`data/settings.json`**, deep-merged over built-in defaults — the file only needs the keys you actually changed. Most of it is editable from the phone's ⚙ Settings screen; the file covers the rest. Invalid values are clamped back into range on load.
 
-The `data/` directory is created on first run and is gitignored (it also holds `secret.json`, the pairing token, and `apps.json`, the launcher tiles).
+The `data/` directory is created on first run and is gitignored (it also holds `secret.json`, the pairing token, and `apps.json`, the launcher tiles). By default it lives beside the source under the repo (`LapDeck/data/`) on every platform; use `LC_DATA_DIR` to relocate it (e.g. `~/.config/lapdeck` on Linux).
 
 ## Environment variables
 
@@ -72,13 +72,18 @@ Managed from the phone (＋ tile to add, long-press to remove), but hand-editabl
   { "id": "proj",    "label": "Project", "kind": "folder", "target": "C:\\dev\\project" },
   { "id": "notes",   "label": "Notes",   "kind": "file",   "target": "C:\\notes.txt" },
   { "id": "yt",      "label": "YouTube", "kind": "url",    "target": "https://youtube.com",
-    "browser": "chrome",            // optional: force a browser (resolved via App Paths)
+    "browser": "chrome",            // optional: force a browser
     "icon": "youtube.svg" }         // optional: file under public/icons/ or an https URL
 ]
 ```
 
-`kind: "exec"` targets resolve like the Run dialog (App Paths), so bare names
-such as `code.exe` or `chrome.exe` work without full paths.
+`kind: "exec"` targets:
+- **Windows** — resolve like the Run dialog (App Paths), so bare names such as
+  `code.exe` or `chrome.exe` work without full paths.
+- **Linux** — resolve on `$PATH`, so bare binary names such as `code` or
+  `google-chrome` work; folders/files/URLs open via `xdg-open`, and a `url`
+  `browser` is the browser's binary name (e.g. `google-chrome`, `firefox`).
+  The default tiles are seeded per-platform on first run.
 
 ## Per-phone preferences
 
