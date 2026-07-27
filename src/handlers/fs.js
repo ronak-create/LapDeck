@@ -1,16 +1,18 @@
-// Filesystem: browse directories and open files/folders in Explorer.
-import { execFile } from "node:child_process";
+// Filesystem: browse directories and open files/folders in the file manager.
 import fsp from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import { open } from "../os/launcher.js";
+import { IS_WIN } from "../platform.js";
 
-// Reserved DOS device names that must never be resolved as paths.
+// Reserved DOS device names that must never be resolved as paths (Windows only;
+// they're ordinary filenames on Linux).
 const RESERVED = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
 
 function safeResolve(p) {
   const resolved = path.resolve(p || os.homedir());
   const base = path.basename(resolved);
-  if (RESERVED.test(base)) throw new Error("invalid path");
+  if (IS_WIN && RESERVED.test(base)) throw new Error("invalid path");
   return resolved;
 }
 
@@ -37,8 +39,8 @@ export const fsHandlers = {
 
   "fs.open": async ({ path: p }) => {
     const target = safeResolve(p);
-    // `start` works for both folders and files, and foregrounds the window.
-    execFile("cmd", ["/c", "start", "", target], { windowsHide: true });
+    // Opens folders and files via the OS default handler, foregrounded.
+    open(target);
     return { opened: target };
   },
 };

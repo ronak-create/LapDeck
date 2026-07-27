@@ -1,32 +1,13 @@
 // System info + power + brightness. Destructive ops require confirm:true AND
 // the matching allow* switch in settings.power.
 import os from "node:os";
-import * as power from "../win/power.js";
-import { getBrightness, setBrightness } from "../win/brightness.js";
-import { getVolume, isMuted } from "../win/volume.js";
-import { runPS } from "../win/ps.js";
-import { getTailscaleIp, getTailscaleDnsName } from "../win/network.js";
+import * as power from "../os/power.js";
+import { getBrightness, setBrightness } from "../os/brightness.js";
+import { getVolume, isMuted } from "../os/volume.js";
+import { battery } from "../os/battery.js";
+import { getTailscaleIp, getTailscaleDnsName } from "../os/network.js";
 import { PORT, VERSION, lanAddress } from "../config.js";
 import { getSettings } from "../settings.js";
-
-async function battery() {
-  try {
-    const out = await runPS(
-      `$b = Get-CimInstance Win32_Battery | Select-Object -First 1; ` +
-        `if ($b) { "$($b.EstimatedChargeRemaining)|$($b.BatteryStatus)" } else { "" }`
-    );
-    if (!out) return { present: false };
-    const [pct, status] = out.split("|");
-    // BatteryStatus 2 = AC connected; others = on battery / charging states.
-    return {
-      present: true,
-      percent: parseInt(pct, 10),
-      charging: status === "2",
-    };
-  } catch {
-    return { present: false };
-  }
-}
 
 // A destructive op needs the client's confirm flag AND the settings switch.
 function guard(confirm, allowed, what) {

@@ -2,15 +2,15 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520-brightgreen.svg)](https://nodejs.org)
-[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4.svg)](#faq)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-0078d4.svg)](#faq)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-8b5cf6.svg)](CONTRIBUTING.md)
 
-**Turn your phone into a remote deck for your Windows laptop.**
+**Turn your phone into a remote deck for your Windows or Linux laptop.**
 
 App launcher · touchpad · keyboard · live screen view · media & volume · brightness · lock/sleep/shutdown — all from the phone in your hand, over your own Wi-Fi. One Node.js process on the laptop, a PWA on the phone, zero cloud, zero accounts.
 
 ```
-Phone (browser / installed PWA)  ── Wi-Fi / Tailscale ──►  LapDeck agent (Node.js on Windows)
+Phone (browser / installed PWA)  ── Wi-Fi / Tailscale ──►  LapDeck agent (Node.js on Windows / Linux)
 ```
 
 Lying in bed and want to pause the movie, nudge the volume, or shut the laptop down? Presenting and need a remote touchpad? LapDeck is a single `npm start` away.
@@ -36,9 +36,9 @@ Lying in bed and want to pause the movie, nudge the volume, or shut the laptop d
 
 ## Quick start
 
-Requirements: Windows 10/11, [Node.js ≥ 20](https://nodejs.org), phone on the same Wi-Fi.
+Requirements: Windows 10/11 **or** Linux, [Node.js ≥ 20](https://nodejs.org), phone on the same Wi-Fi.
 
-```powershell
+```bash
 git clone https://github.com/ronak-create/LapDeck.git
 cd LapDeck
 npm install
@@ -47,15 +47,49 @@ npm start
 
 The terminal prints a QR code. Scan it with your phone — the UI opens already paired (the token rides in the link and is stored on the phone; you scan once). Then use your browser menu → **Add to Home screen**.
 
-> **Phone can't connect?** Allow **Node.js** through Windows Firewall on **private networks** — the prompt appears on first run. That's the #1 cause.
+> **Phone can't connect?** On Windows, allow **Node.js** through Windows Firewall on **private networks** (the prompt appears on first run). On Linux, allow the port: `sudo ufw allow 8765/tcp`. That's the #1 cause.
+
+### Linux requirements
+
+Everything runs on both **X11** and **Wayland**, but the tools differ. The agent degrades gracefully — a missing tool disables just that feature with a clear message, it never crashes.
+
+| Feature | Needs |
+| --- | --- |
+| Media / volume / mute | `pactl` (PulseAudio or PipeWire) + `playerctl` |
+| Brightness | `brightnessctl` (or write access to `/sys/class/backlight`) |
+| Power (lock/sleep/shutdown) | `systemd` + `loginctl` (standard on most distros) |
+| Touchpad / keyboard — **X11** | `libXtst` (for the bundled nut.js) |
+| Touchpad / keyboard — **Wayland** | `ydotool` + a running `ydotoold` with uinput access |
+| Live screen view — **X11** | works out of the box (nut.js) |
+| Live screen view — **Wayland** | `grim` (Sway/Hyprland); GNOME/KDE-Wayland portal-only sessions aren't supported yet |
+
+Debian/Ubuntu one-liner for the common set:
+
+```bash
+sudo apt install libxtst6 pulseaudio-utils playerctl brightnessctl ydotool grim
+```
+
+**Wayland input setup:** `ydotool` injects via `/dev/uinput`, which needs the `ydotoold` daemon running and permission on the device. The simplest path is a udev rule granting your user access, then start the daemon (e.g. `systemctl --user enable --now ydotoold` if your distro ships the unit, or run `ydotoold` from your session autostart). See the [ydotool README](https://github.com/ReimuNotMoe/ydotool) for the udev rule.
 
 ### Run automatically at login (hidden, no console)
+
+**Windows** — drops a tiny launcher into your Startup folder (no admin needed):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\install-autostart.ps1
 ```
 
-Drops a tiny launcher into your Startup folder (no admin needed). Manage it with `scripts\stop-agent.ps1` and `scripts\uninstall-autostart.ps1`. Autostart runs after you log in, because input injection and screen capture need your interactive session.
+Manage it with `scripts\stop-agent.ps1` and `scripts\uninstall-autostart.ps1`.
+
+**Linux** — installs a systemd `--user` service (no root):
+
+```bash
+bash scripts/install-autostart.sh
+```
+
+Manage it with `scripts/stop-agent.sh` and `scripts/uninstall-autostart.sh`. To keep it running after you log out, enable lingering once: `sudo loginctl enable-linger "$USER"`.
+
+Autostart runs after you log in, because input injection and screen capture need your interactive graphical session.
 
 ## Customization
 
@@ -93,15 +127,19 @@ Tailscale is entirely optional — LapDeck never needs the internet and has no c
 ```
 src/
   index.js        HTTP + WebSocket server, QR pairing
+  platform.js     OS + display-server (X11/Wayland) detection
   settings.js     defaults + data/settings.json (the customization layer)
   config.js       pairing token, launcher entries
   auth.js         constant-time token guards
   router.js       command dispatch + feature-switch enforcement
-  stream.js       shared MJPEG capture loop (nut.js + sharp)
+  stream.js       shared MJPEG capture loop (viewer fan-out + backpressure)
   handlers/       one module per command namespace (apps, input, media, …)
-  win/            all Windows-specific PowerShell/CLI helpers
+  os/             per-capability facade: picks the backend for this platform
+  win/            Windows backends (PowerShell/CLI helpers)
+  linux/          Linux backends (pactl, brightnessctl, systemctl, ydotool, grim…)
+  backends/       shared nut.js input + screen backends (Windows & Linux X11)
 public/           the phone PWA (vanilla HTML/CSS/JS)
-scripts/          autostart install/stop/uninstall (PowerShell)
+scripts/          autostart install/stop/uninstall (PowerShell + shell)
 data/             created at runtime: token, settings, launcher (gitignored)
 ```
 
@@ -109,9 +147,11 @@ The full WebSocket protocol is documented in [docs/PROTOCOL.md](docs/PROTOCOL.md
 
 ## FAQ
 
-**Why Windows-only?** All the OS glue (volume, brightness, power, capture) lives behind `src/win/`. Ports to macOS/Linux are welcome — the protocol and UI are OS-agnostic.
+**Windows and Linux?** Yes. All OS glue sits behind a small facade (`src/os/`) that selects a per-platform backend: `src/win/` on Windows, `src/linux/` on Linux, with shared nut.js backends (`src/backends/`) for X11 and Windows. A macOS port would add `src/mac/` and slot into the same facade — contributions welcome.
 
-**Sleep hibernates instead?** Windows quirk: if hibernation is enabled, `SetSuspendState` hibernates. `powercfg /h off` if you prefer S3 sleep.
+**Wayland vs X11?** Both work. On X11 everything runs through nut.js just like Windows. On Wayland the compositor blocks synthetic input and screen grabs, so LapDeck uses `ydotool` (input) and `grim` (screen) instead — see [Linux requirements](#linux-requirements). Two known Wayland gaps: two-finger **scroll** isn't available via ydotool, and screen view needs a `grim`-capable compositor (Sway/Hyprland).
+
+**Sleep hibernates instead?** Windows quirk: if hibernation is enabled, `SetSuspendState` hibernates. `powercfg /h off` if you prefer S3 sleep. On Linux, sleep uses `systemctl suspend`.
 
 **Screen view shows the primary display only** — multi-monitor selection is on the wishlist.
 

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+
+jobs:
+  smoke:
+    name: Smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # nut.js needs libXtst at runtime and an X server; sharp needs libpng.
+      # xvfb provides a headless display so the X11 backend can load.
+      - name: Install Linux runtime libs
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libxtst6 libpng16-16 xvfb
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Syntax check
+        shell: bash
+        run: |
+          for f in src/*.js src/**/*.js; do node --check "$f"; done
+
+      - name: Smoke (Linux, headless X)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a node scripts/smoke.mjs
+
+      - name: Smoke (Windows)
+        if: runner.os == 'Windows'
+        run: node scripts/smoke.mjs

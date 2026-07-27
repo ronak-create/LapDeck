@@ -5,13 +5,14 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 import os from "node:os";
 import { DATA_DIR, getSettings } from "./settings.js";
+import { IS_WIN } from "./platform.js";
 
 const SECRET_FILE = path.join(DATA_DIR, "secret.json");
 const APPS_FILE = path.join(DATA_DIR, "apps.json");
 
 export const PORT = Number(process.env.LC_PORT) || getSettings().port;
 export const BIND = process.env.LC_BIND || getSettings().bind;
-export const VERSION = "1.0.0";
+export const VERSION = "1.1.0";
 
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -35,9 +36,13 @@ export function loadToken() {
 
 function defaultApps() {
   const home = os.homedir();
+  // Browser/editor binaries differ per platform: `chrome.exe`/`code.exe` resolve
+  // via Windows App Paths; on Linux they're PATH binaries (`google-chrome`, `code`).
+  const chrome = IS_WIN ? "chrome.exe" : "google-chrome";
+  const code = IS_WIN ? "code.exe" : "code";
   return [
-    { id: "chrome", label: "Chrome", kind: "exec", target: "chrome.exe", args: [] },
-    { id: "vscode", label: "VS Code", kind: "exec", target: "code.exe", args: [] },
+    { id: "chrome", label: "Chrome", kind: "exec", target: chrome, args: [] },
+    { id: "vscode", label: "VS Code", kind: "exec", target: code, args: [] },
     { id: "files", label: "Files", kind: "folder", target: home },
     { id: "downloads", label: "Downloads", kind: "folder", target: path.join(home, "Downloads") },
     { id: "youtube", label: "YouTube", kind: "url", target: "https://youtube.com" },

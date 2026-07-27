@@ -1,8 +1,8 @@
 {
   "name": "lapdeck",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
-  "description": "Turn your phone into a remote deck for your Windows laptop — app launcher, touchpad, keyboard, live screen view, media & power controls. One Node process, zero cloud.",
+  "description": "Turn your phone into a remote deck for your Windows or Linux laptop — app launcher, touchpad, keyboard, live screen view, media & power controls. One Node process, zero cloud.",
   "license": "MIT",
   "author": "Ronak Parmar (https://github.com/ronak-create)",
   "repository": {
@@ -16,6 +16,7 @@
   "keywords": [
     "remote-control",
     "windows",
+    "linux",
     "android",
     "touchpad",
     "remote-desktop",
@@ -27,7 +28,8 @@
     "node": ">=20"
   },
   "os": [
-    "win32"
+    "win32",
+    "linux"
   ],
   "scripts": {
     "start": "node src/index.js",
