@@ -166,11 +166,18 @@ header.nav.scrolled{border-bottom-color:var(--line);background:rgba(11,15,23,.82
 .hero-meta{display:flex;gap:26px;margin-top:34px;flex-wrap:wrap;color:var(--muted-2);font-size:14px}
 .hero-meta span{display:inline-flex;align-items:center;gap:8px}
 .hero-meta svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2}
+.hero-install{display:flex;align-items:center;gap:12px;margin-top:22px;max-width:640px;padding:11px 12px 11px 16px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.02);overflow:hidden}
+.hero-install .prompt{color:var(--accent);font-family:"JetBrains Mono";font-weight:700;user-select:none}
+.hero-install code{flex:1;min-width:0;font-family:"JetBrains Mono";font-size:13.5px;color:var(--text);white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.hero-install code::-webkit-scrollbar{display:none}
+.hero-install .copy{flex-shrink:0}
+.hero-install .os{margin-top:9px;font-size:12.5px;color:var(--muted-2)}
 @media(max-width:560px){
   .hero{min-height:auto;padding:72px 0 48px}
   .hero-cta{gap:10px}
   .hero-cta .btn{flex:1 1 100%}
   .hero-meta{gap:14px 20px;margin-top:28px}
+  .hero-install code{font-size:12px}
 }
 
 /* connection flow diagram */
@@ -367,6 +374,9 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
         { "@type": "Question", "name": "Sleep hibernates instead of sleeping.", "acceptedAnswer": { "@type": "Answer", "text": "A Windows quirk: if hibernation is enabled, SetSuspendState hibernates. Run powercfg /h off if you prefer S3 sleep. On Linux, sleep uses systemctl suspend." } },
         { "@type": "Question", "name": "Does it work without internet?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — everything is LAN-local. The internet is only involved if you choose to add Tailscale for remote access." } },
         { "@type": "Question", "name": "Can I control it from outside my home Wi-Fi?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Install free Tailscale on both devices — no port forwarding, no config. The agent detects it and shows a remote QR / URL automatically." } },
+        { "@type": "Question", "name": "Do I have to use Tailscale? Can I just use SSH?", "acceptedAnswer": { "@type": "Answer", "text": "SSH is fine — Tailscale is just the zero-config option, not a requirement. The agent is a plain HTTP server on a port, so any tunnel reaches it. If you have a VPS, reverse-forward from the laptop with ssh -N -R 8765:localhost:8765 you@your-vps and open your-vps:8765 on your phone, behind HTTPS and the VPS firewall. mosh, wireguard, and cloudflared work too." } },
+        { "@type": "Question", "name": "Can I use it with a terminal or Claude Code on a VPS?", "acceptedAnswer": { "@type": "Answer", "text": "Indirectly. LapDeck controls a desktop, not a headless server — the Screen tab mirrors your laptop to the phone with tap-to-click, so a VPS session open in a desktop terminal window is drivable through it. To connect straight to a headless VPS with no GUI, an SSH client with tmux or mosh is the right tool." } },
+        { "@type": "Question", "name": "Does the live screen work on iPhone or iPad?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. iOS Safari can't render the MJPEG stream other browsers use, so LapDeck automatically falls back to fetching frames one at a time — same live view with tap-to-click, just polled instead of streamed." } },
         { "@type": "Question", "name": "Multiple monitors?", "acceptedAnswer": { "@type": "Answer", "text": "Screen view currently shows the primary display only. Multi-monitor selection is on the wishlist — contributions welcome." } }
       ]
     }
@@ -422,6 +432,15 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.28 5.69.42.36.79 1.07.79 2.16v3.2c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
         View on GitHub
       </a>
+    </div>
+    <!-- one-line install (Linux / macOS) -->
+    <div class="reveal">
+      <div class="hero-install" title="Linux / macOS one-line install">
+        <span class="prompt">$</span>
+        <code>curl -fsSL https://raw.githubusercontent.com/ronak-create/LapDeck/main/scripts/install.sh | sh</code>
+        <button class="copy" data-copy="curl -fsSL https://raw.githubusercontent.com/ronak-create/LapDeck/main/scripts/install.sh | sh" aria-label="Copy install command"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button>
+      </div>
+      <div class="os">Linux / macOS. On Windows, use the <a href="#setup">clone &amp; install</a> steps below.</div>
     </div>
     <div class="hero-meta reveal">
       <span><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Windows &amp; Linux</span>
@@ -585,6 +604,12 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12a10 10 0 0 1 20 0M6 12a6 6 0 0 1 12 0M10 12a2 2 0 0 1 4 0"/></svg>
           Get Tailscale (free)
         </a>
+        <p style="margin-top:22px;font-size:15px;color:var(--muted-2)"><b style="color:var(--text)">Prefer SSH? No Tailscale needed.</b> The agent is just an HTTP server on a port, so any tunnel that reaches it works. Already have a VPS? Reverse-forward from the laptop and open it on your phone:</p>
+        <div class="code" style="margin-top:12px">
+          <div class="code-top"><span class="lbl">On the laptop — reverse SSH tunnel to your VPS</span><button class="copy" data-copy="ssh -N -R 8765:localhost:8765 you@your-vps"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button></div>
+          <pre><code><span class="tok-k">ssh</span> -N -R 8765:localhost:8765 you@your-vps</code></pre>
+        </div>
+        <p style="margin-top:12px;font-size:13.5px;color:var(--muted-2)">Then browse to <code>your-vps:8765</code> (put it behind HTTPS + the VPS firewall — see the <a href="https://github.com/ronak-create/LapDeck#prefer-ssh-tunnel-it-instead" target="_blank" rel="noopener">SSH tunnel notes</a>). <code>mosh</code>, <code>wireguard</code>, and <code>cloudflared</code> work the same way.</p>
       </div>
       <div class="remote-steps">
         <div class="rstep"><span class="rnum">1</span><div><h4>Install on the laptop</h4><p>Install Tailscale for Windows or Linux and sign in with Google, GitHub or Microsoft — one account, no server to run.</p></div></div>
@@ -792,6 +817,9 @@ footer{border-top:1px solid var(--line);padding:48px 0 60px;margin-top:20px}
       <details class="q reveal"><summary>Sleep hibernates instead of sleeping.<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">A Windows quirk: if hibernation is enabled, <code>SetSuspendState</code> hibernates. Run <code>powercfg /h off</code> if you prefer S3 sleep. On Linux, sleep uses <code>systemctl suspend</code>.</div></details>
       <details class="q reveal"><summary>Does it work without internet?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Yes — everything is LAN-local. The internet is only involved if you choose to add Tailscale for remote access.</div></details>
       <details class="q reveal"><summary>Can I control it from outside my home Wi-Fi?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Yes. Install free <b>Tailscale</b> on both devices — no port forwarding, no config. The agent detects it and shows a remote QR / URL automatically.</div></details>
+      <details class="q reveal"><summary>Do I have to use Tailscale? Can I just use SSH?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">SSH is fine — Tailscale is just the zero-config option, not a requirement. The agent is a plain HTTP server on a port, so any tunnel reaches it. If you have a VPS, reverse-forward from the laptop with <code>ssh -N -R 8765:localhost:8765 you@your-vps</code> and open <code>your-vps:8765</code> on your phone (put it behind HTTPS + the VPS firewall). <code>mosh</code>, <code>wireguard</code>, and <code>cloudflared</code> work too.</div></details>
+      <details class="q reveal"><summary>Can I use it with a terminal / Claude Code on a VPS?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Indirectly. LapDeck controls a <b>desktop</b>, not a headless server — the <b>Screen</b> tab mirrors your laptop to the phone with tap-to-click. So if the VPS session is open in a terminal window on your desktop (Claude Code running in it, say), you drive that window through the Screen tab like anything else. To connect straight to a headless VPS with no GUI, an SSH client with <code>tmux</code>/<code>mosh</code> is the right tool — LapDeck isn't a terminal.</div></details>
+      <details class="q reveal"><summary>Does the live screen work on iPhone / iPad?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Yes. iOS Safari can't render the MJPEG stream other browsers use, so LapDeck automatically falls back to fetching frames one at a time — same live view, tap-to-click included, just polled instead of streamed.</div></details>
       <details class="q reveal"><summary>Multiple monitors?<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary><div class="a">Screen view currently shows the primary display only. Multi-monitor selection is on the wishlist — contributions welcome.</div></details>
     </div>
   </div>
