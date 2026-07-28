@@ -38,6 +38,14 @@ Lying in bed and want to pause the movie, nudge the volume, or shut the laptop d
 
 Requirements: Windows 10/11 **or** Linux, [Node.js ≥ 20](https://nodejs.org), phone on the same Wi-Fi.
 
+**Linux / macOS — one line** (clones into `~/LapDeck`, installs deps; runs as your user, no root):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ronak-create/LapDeck/main/scripts/install.sh | sh
+```
+
+Prefer to read before you pipe to a shell? [`scripts/install.sh`](scripts/install.sh) is short — or just do it by hand (works on Windows too):
+
 ```bash
 git clone https://github.com/ronak-create/LapDeck.git
 cd LapDeck
@@ -122,6 +130,23 @@ Want to control the laptop from work, a friend's place, or another country? Inst
 
 Tailscale is entirely optional — LapDeck never needs the internet and has no cloud component. Any WireGuard/VPN setup that puts your phone on your home network works too; Tailscale is just the zero-config way. What you should **not** do is expose the agent's port directly to the internet — see the security model above.
 
+### Prefer SSH? Tunnel it instead
+
+The agent is just an HTTP/WS server on a port, so **anything that reaches that port works** — Tailscale is one convenient option, not a requirement. If you already have a server with a public IP (a VPS, say), a reverse SSH tunnel needs no extra software:
+
+```bash
+# On the laptop running LapDeck — forward its port out to your VPS:
+ssh -N -R 8765:localhost:8765 you@your-vps
+```
+
+Then on the phone open `http://your-vps:8765/#t=<token>` (grab the token from the QR/URL the agent prints). A few notes so you don't accidentally expose it:
+
+- By default `ssh -R` binds the forwarded port to the VPS's **loopback only**, so it isn't reachable from the public internet — to reach it from your phone you either browse *through another tunnel to the VPS*, or set `GatewayPorts clientspecified` on the VPS and bind deliberately (`ssh -R 127.0.0.1:8765:...` stays private; `ssh -R 8765:...` with GatewayPorts on goes public — only do that behind the VPS firewall + HTTPS).
+- Cleanest and safest: terminate TLS at the VPS (nginx/Caddy reverse-proxy on 443 → the tunneled port) so the phone gets a real HTTPS URL and the PWA installs properly.
+- Whatever you do, **don't bind the agent itself to a public interface** — keep it on localhost/LAN/Tailscale and let the tunnel do the crossing.
+
+The same trick works with `mosh`, `wireguard`, `cloudflared`, or any other tunnel — LapDeck doesn't care how the packets arrive.
+
 ## Project layout
 
 ```
@@ -158,6 +183,10 @@ The full WebSocket protocol is documented in [docs/PROTOCOL.md](docs/PROTOCOL.md
 **Can I see my laptop screen on the phone?** Yes — the **Screen** tab is a live view of the laptop (launcher tiles _open apps on the laptop_; the Screen tab is what mirrors it back to the phone, tap-to-click included). On iPhone/iPad it works too: iOS Safari can't render the MJPEG stream, so LapDeck automatically falls back to fetching frames one at a time — same picture, just polled instead of streamed.
 
 **Does it work without internet?** Yes — everything is LAN-local. Internet is only involved if you use Tailscale.
+
+**Can I use it to reach Claude Code / a terminal on a VPS?** Indirectly. LapDeck controls a **desktop**, not a headless server — launcher tiles open apps *on the laptop*, and the **Screen** tab mirrors that laptop back to your phone. So if the VPS session is open in a terminal window on your desktop (Claude Code running in it, say), you see and drive that window through the Screen tab like anything else. For connecting *straight* to a headless VPS with no GUI, an SSH client with `tmux`/`mosh` is the right tool — LapDeck isn't a terminal.
+
+**Have to use Tailscale for remote access?** No — see [Prefer SSH? Tunnel it instead](#prefer-ssh-tunnel-it-instead). Any tunnel that reaches the agent's port works.
 
 ## Contributing
 
