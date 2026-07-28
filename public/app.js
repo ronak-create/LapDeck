@@ -787,6 +787,44 @@
   let curPreset = "med";
   let scrW = 0, scrH = 0, streaming = false;
 
+  // iOS Safari (WebKit) can't render a multipart/x-mixed-replace MJPEG stream in
+  // an <img> — the tag stays blank. Detect iOS (iPadOS 13+ masquerades as Mac,
+  // so also treat a touch-capable "Mac" as iOS) and poll single frames instead.
+  const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  let pollTimer = null, pollBusy = false, prevFrameUrl = null;
+
+  function revokeFrame() {
+    if (prevFrameUrl) { URL.revokeObjectURL(prevFrameUrl); prevFrameUrl = null; }
+  }
+
+  // Fetch one JPEG, swap it into the same <img> the MJPEG path uses (so tap-to-
+  // click, the cursor overlay, and the loupe all keep working), then reschedule
+  // at the preset's frame interval. Requests never overlap (pollBusy guard).
+  async function pollFrame() {
+    if (!streaming || pollBusy) return;
+    pollBusy = true;
+    const p = PRESETS[curPreset];
+    try {
+      const r = await fetch(
+        `/frame.jpg?token=${encodeURIComponent(TOKEN)}&width=${p.width}&quality=${p.quality}&_=${Date.now()}`,
+        { cache: "no-store" }
+      );
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
+      img.onload = () => { scrStatus.style.display = "none"; revokeFrame(); prevFrameUrl = url; renderCursor(); };
+      img.onerror = () => { URL.revokeObjectURL(url); };
+      img.src = url;
+    } catch {
+      if (streaming) scrStatus.style.display = "";
+    } finally {
+      pollBusy = false;
+      if (streaming) pollTimer = setTimeout(pollFrame, Math.round(1000 / PRESETS[curPreset].fps));
+    }
+  }
+
   async function startScreen() {
     if (!img) return;
     scrStatus.style.display = "";
@@ -794,9 +832,14 @@
     try {
       const { screenW, screenH } = await send("screen.start", PRESETS[curPreset]);
       scrW = screenW; scrH = screenH; streaming = true;
-      img.onload = () => { scrStatus.style.display = "none"; renderCursor(); };
-      img.onerror = () => { scrStatus.style.display = ""; scrStatus.textContent = "Stream error — reopen this tab"; };
-      img.src = `/stream.mjpeg?token=${encodeURIComponent(TOKEN)}&_=${Date.now()}`;
+      if (IS_IOS) {
+        // Polling fallback: no persistent MJPEG connection, fetch frames instead.
+        pollFrame();
+      } else {
+        img.onload = () => { scrStatus.style.display = "none"; renderCursor(); };
+        img.onerror = () => { scrStatus.style.display = ""; scrStatus.textContent = "Stream error — reopen this tab"; };
+        img.src = `/stream.mjpeg?token=${encodeURIComponent(TOKEN)}&_=${Date.now()}`;
+      }
       // Realtime cursor overlay: seed from the true pointer, then reconcile.
       if (cursorEl) {
         cursorEl.classList.remove("hidden");
@@ -811,7 +854,9 @@
   }
   function stopScreen() {
     streaming = false;
-    if (img) { img.removeAttribute("src"); } // aborts the MJPEG connection → loop stops
+    if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
+    if (img) { img.onload = img.onerror = null; img.removeAttribute("src"); } // aborts the MJPEG connection → loop stops
+    revokeFrame();
     if (cursorEl) cursorEl.classList.add("hidden");
     stopLoupe();
     if (reconcileTimer) { clearInterval(reconcileTimer); reconcileTimer = null; }
