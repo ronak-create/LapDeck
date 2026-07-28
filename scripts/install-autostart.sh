@@ -1,10 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Installs LapDeck as a systemd --user service so it starts at login, headless
 # (no terminal), with NO root. Re-run any time to refresh paths. Uninstall with
 # scripts/uninstall-autostart.sh; stop the running agent with scripts/stop-agent.sh.
-set -euo pipefail
+# POSIX sh — safe to run with `sh install-autostart.sh` (as the README shows).
+set -eu
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"   # repo root
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"   # repo root
 ENTRY="$REPO_DIR/src/index.js"
 NODE="$(command -v node)"
 UNIT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"

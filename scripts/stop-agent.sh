@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Stops the running LapDeck agent. Stops the systemd --user service if installed;
 # otherwise falls back to the PID recorded in the data dir.
-set -euo pipefail
+set -eu
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 if systemctl --user list-unit-files lapdeck.service >/dev/null 2>&1 \
    && systemctl --user is-active --quiet lapdeck.service; then
