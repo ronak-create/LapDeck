@@ -26,6 +26,16 @@ export async function screenSize() {
   return backendScreenSize();
 }
 
+// One-off JPEG grab for the polling fallback (iOS Safari can't render the
+// multipart MJPEG stream in an <img>, so it fetches frames one at a time).
+// Falls back to the shared loop's config when a param is omitted.
+export async function grabOne({ width, quality } = {}) {
+  return grabJpeg({
+    width: Number.isFinite(width) ? Math.max(480, Math.min(2560, Math.round(width))) : config.width,
+    quality: Number.isFinite(quality) ? Math.max(20, Math.min(90, Math.round(quality))) : config.quality,
+  });
+}
+
 async function tick() {
   timer = null;
   if (viewers.size === 0 || grabbing) return;

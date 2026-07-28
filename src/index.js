@@ -11,7 +11,7 @@ import { PORT, BIND, VERSION, loadToken, lanAddress } from "./config.js";
 import { DATA_DIR, featureEnabled } from "./settings.js";
 import { setToken, tokenValid, httpAuth } from "./auth.js";
 import { dispatch } from "./router.js";
-import { addViewer, removeViewer } from "./stream.js";
+import { addViewer, removeViewer, grabOne } from "./stream.js";
 import { getTailscaleIp } from "./os/network.js";
 import { IS_WIN, hostname } from "./platform.js";
 
@@ -41,6 +41,28 @@ app.get("/stream.mjpeg", httpAuth, (req, res) => {
   const done = () => { removeViewer(res); log("stream close", req.socket.remoteAddress); };
   req.on("close", done);
   res.on("error", done);
+});
+
+// Single-frame JPEG for the polling fallback. iOS Safari (WebKit) won't render
+// a multipart/x-mixed-replace stream in an <img>, so on iOS the phone fetches
+// frames one at a time from here instead of opening /stream.mjpeg.
+app.get("/frame.jpg", httpAuth, async (req, res) => {
+  if (!featureEnabled("screen")) {
+    res.status(403).type("text/plain").send("screen view is disabled in settings");
+    return;
+  }
+  try {
+    const jpg = await grabOne({ width: Number(req.query.width), quality: Number(req.query.quality) });
+    res.writeHead(200, {
+      "Content-Type": "image/jpeg",
+      "Content-Length": jpg.length,
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+    });
+    res.end(jpg);
+  } catch {
+    res.status(500).type("text/plain").send("frame grab failed");
+  }
 });
 
 app.use(express.static(PUBLIC_DIR)); // the only unauthenticated route: the UI itself

@@ -155,6 +155,8 @@ The full WebSocket protocol is documented in [docs/PROTOCOL.md](docs/PROTOCOL.md
 
 **Screen view shows the primary display only** — multi-monitor selection is on the wishlist.
 
+**Can I see my laptop screen on the phone?** Yes — the **Screen** tab is a live view of the laptop (launcher tiles _open apps on the laptop_; the Screen tab is what mirrors it back to the phone, tap-to-click included). On iPhone/iPad it works too: iOS Safari can't render the MJPEG stream, so LapDeck automatically falls back to fetching frames one at a time — same picture, just polled instead of streamed.
+
 **Does it work without internet?** Yes — everything is LAN-local. Internet is only involved if you use Tailscale.
 
 ## Contributing
