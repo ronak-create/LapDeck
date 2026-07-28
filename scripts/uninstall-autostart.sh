@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Removes the LapDeck systemd --user service (stops it first). Leaves your data
 # dir (token, settings, launcher) untouched.
-set -euo pipefail
+set -eu
 
 UNIT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 UNIT="$UNIT_DIR/lapdeck.service"
